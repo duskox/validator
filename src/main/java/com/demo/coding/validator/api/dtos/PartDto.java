@@ -1,11 +1,11 @@
-package com.demo.coding.validator.domain;
+package com.demo.coding.validator.api.dtos;
 
 import lombok.Builder;
 import lombok.Value;
 
 @Value
 @Builder
-public class Part {
+public class PartDto {
     String inventoryNumber;
     String name;
     int count;
