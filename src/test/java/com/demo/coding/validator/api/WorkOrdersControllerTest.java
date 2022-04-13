@@ -1,10 +1,6 @@
 package com.demo.coding.validator.api;
 
-import com.demo.coding.validator.api.dtos.ErrorDto;
-import com.demo.coding.validator.api.dtos.PartDto;
 import com.demo.coding.validator.api.dtos.WorkOrderDto;
-import com.demo.coding.validator.domain.FieldValidation;
-import com.demo.coding.validator.domain.WorkOrderType;
 import com.demo.coding.validator.services.WorkOrderProcessor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +13,6 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
 import java.util.List;
-import java.util.Map;
 
 import static com.demo.coding.validator.TestUtils.analysisWorkOrderBuilder;
 import static com.demo.coding.validator.TestUtils.partDtoBuilder;
@@ -34,7 +29,7 @@ class WorkOrdersControllerTest {
     WorkOrderProcessor workOrderProcessor;
 
     @Test
-    void givenValidPayload_whenValidating_thenReturnOk() {
+    void givenApiCall_whenValidationSuccessful_thenReturnOk() {
         var partDto = partDtoBuilder()
                 .build();
         var analysisDto = analysisWorkOrderBuilder()
@@ -42,7 +37,7 @@ class WorkOrdersControllerTest {
                 .build();
 
         new Arranger()
-                .withValidResponse(analysisDto, true);
+                .withValidatorResponseForPayload(true, analysisDto);
 
         webTestClient
                 .post()
@@ -54,19 +49,15 @@ class WorkOrdersControllerTest {
     }
 
     @Test
-    void givenInvalidPayload_whenValidating_thenReturnErrorDetails() {
+    void givenApiCall_whenValidationFailed_thenValidateBadRequest() {
         var partDto = partDtoBuilder()
                 .build();
         var analysisDto = analysisWorkOrderBuilder()
                 .parts(List.of(partDto))
                 .build();
-        var errorDetails = Map.of(
-                FieldValidation.DEPARTMENT, FieldValidation.FIELD_SHOULD_NOT_BE_BLANK,
-                FieldValidation.START_DATE, "Should not be after current date"
-        );
 
         new Arranger()
-                .withValidResponse(analysisDto, false);
+                .withValidatorResponseForPayload(false, analysisDto);
 
         webTestClient
                 .post()
@@ -77,11 +68,9 @@ class WorkOrdersControllerTest {
                 .isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
-
-
     private class Arranger {
-        public Arranger withValidResponse(WorkOrderDto workOrderDto,
-                                          boolean response) {
+        public Arranger withValidatorResponseForPayload(boolean response,
+                                                        WorkOrderDto workOrderDto) {
             given(workOrderProcessor.validateWorkOrder(workOrderDto))
                     .willReturn(response);
             return this;
