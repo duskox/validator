@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.DefaultErrorWebExceptionHandler;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -37,16 +38,13 @@ public class ApiWebExceptionHandler extends DefaultErrorWebExceptionHandler {
 
     // Error formatting handlers
     private Mono<ServerResponse> handleInvalidWorkOrderError(InvalidWorkOrderException ex) {
-        var responseBuilder = ServerResponse.status(ex.getStatusCode());
-
-        responseBuilder.body(BodyInserters.fromValue(
-                ErrorDto
-                        .builder()
-                        .failureReason(ex.getReason())
-                        .details(ex.getDetails())
-                        .build()
-        ));
-
-        return responseBuilder.build();
+        return ServerResponse
+                .status(HttpStatus.BAD_REQUEST)
+                .body(BodyInserters
+                        .fromValue(ErrorDto
+                                .builder()
+                                .failureReason(ex.getReason())
+                                .details(ex.getDetails())
+                                .build()));
     }
 }

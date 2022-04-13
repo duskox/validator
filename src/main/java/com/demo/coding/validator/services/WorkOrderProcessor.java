@@ -12,19 +12,21 @@ import java.util.stream.Collectors;
 @Service
 public class WorkOrderProcessor {
 
-    public ValidationResponseDto validateWorkOrder(WorkOrderDto workOrderDto) {
+    public boolean validateWorkOrder(WorkOrderDto workOrderDto) {
 
         var workOrderType = validateWorkOrderType(workOrderDto);
 
-        WorkOrder workOrder;
+        WorkOrder workOrder = null;
         switch (workOrderType) {
             case ANALYSIS -> workOrder = mapToAnalysisWorkOrder(workOrderDto);
             case REPAIR -> workOrder = mapToRepairWorkOrder(workOrderDto);
             case REPLACEMENT -> workOrder = mapToReplacementWorkOrder(workOrderDto);
         }
 
-
-        return ValidationResponseDto.builder().build();
+        if (workOrder != null) {
+            return true;
+        }
+        return false;
     }
 
     private WorkOrderType validateWorkOrderType(WorkOrderDto workOrderDto) {
@@ -115,6 +117,4 @@ public class WorkOrderProcessor {
                 factoryName,
                 factoryOrderNumber);
     }
-
-
 }

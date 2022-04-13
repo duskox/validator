@@ -1,8 +1,9 @@
 package com.demo.coding.validator.api;
 
+import com.demo.coding.validator.api.dtos.ErrorDto;
 import com.demo.coding.validator.api.dtos.PartDto;
-import com.demo.coding.validator.api.dtos.ValidationResponseDto;
 import com.demo.coding.validator.api.dtos.WorkOrderDto;
+import com.demo.coding.validator.domain.FieldValidation;
 import com.demo.coding.validator.domain.WorkOrderType;
 import com.demo.coding.validator.services.WorkOrderProcessor;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,10 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
 import java.util.List;
+import java.util.Map;
 
+import static com.demo.coding.validator.TestUtils.analysisWorkOrderBuilder;
+import static com.demo.coding.validator.TestUtils.partDtoBuilder;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(SpringExtension.class)
@@ -30,19 +34,15 @@ class WorkOrdersControllerTest {
     WorkOrderProcessor workOrderProcessor;
 
     @Test
-    void given_when_then() {
+    void givenValidPayload_whenValidating_thenReturnOk() {
         var partDto = partDtoBuilder()
                 .build();
         var analysisDto = analysisWorkOrderBuilder()
                 .parts(List.of(partDto))
                 .build();
-        var expectedResult = ValidationResponseDto
-                .builder()
-                .valid(true)
-                .build();
 
         new Arranger()
-                .withValidResponse(analysisDto, expectedResult);
+                .withValidResponse(analysisDto, true);
 
         webTestClient
                 .post()
@@ -50,35 +50,40 @@ class WorkOrdersControllerTest {
                 .body(BodyInserters.fromValue(analysisDto))
                 .exchange()
                 .expectStatus()
-                .isEqualTo(HttpStatus.OK)
-                .expectBody(ValidationResponseDto.class)
-                .isEqualTo(expectedResult);
+                .isEqualTo(HttpStatus.OK);
     }
 
-    private WorkOrderDto.WorkOrderDtoBuilder analysisWorkOrderBuilder() {
-        return WorkOrderDto
-                .builder()
-                .type(WorkOrderType.ANALYSIS.name())
-                .department("Test department")
-                .startDate("2020-08-13")
-                .endDate("2020-08-16")
-                .currency("USD")
-                .cost("123.12");
+    @Test
+    void givenInvalidPayload_whenValidating_thenReturnErrorDetails() {
+        var partDto = partDtoBuilder()
+                .build();
+        var analysisDto = analysisWorkOrderBuilder()
+                .parts(List.of(partDto))
+                .build();
+        var errorDetails = Map.of(
+                FieldValidation.DEPARTMENT, FieldValidation.FIELD_SHOULD_NOT_BE_BLANK,
+                FieldValidation.START_DATE, "Should not be after current date"
+        );
+
+        new Arranger()
+                .withValidResponse(analysisDto, false);
+
+        webTestClient
+                .post()
+                .uri("/work-orders")
+                .body(BodyInserters.fromValue(analysisDto))
+                .exchange()
+                .expectStatus()
+                .isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
-    private PartDto.PartDtoBuilder partDtoBuilder() {
-        return PartDto
-                .builder()
-                .name("Part name")
-                .count(1)
-                .inventoryNumber("Some inventory number");
-    }
+
 
     private class Arranger {
         public Arranger withValidResponse(WorkOrderDto workOrderDto,
-                                          ValidationResponseDto validResponse) {
+                                          boolean response) {
             given(workOrderProcessor.validateWorkOrder(workOrderDto))
-                    .willReturn(validResponse);
+                    .willReturn(response);
             return this;
         }
     }

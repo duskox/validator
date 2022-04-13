@@ -1,14 +1,16 @@
 package com.demo.coding.validator.api.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
 
 import java.util.List;
 
-@Value
+@Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class WorkOrderDto {
+
     // Common & Analysis part
     @JsonProperty("type")
     String type;

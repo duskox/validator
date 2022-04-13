@@ -13,12 +13,26 @@ import java.util.stream.Collectors;
 
 public class FieldValidation {
 
+    public static final String DEPARTMENT = "department";
+    public static final String START_DATE = "startDate";
+    public static final String END_DATE = "endDate";
+    public static final String CURRENCY = "currency";
+    public static final String COST = "cost";
+    public static final String ANALYSIS_DATE = "analysisDate";
+    public static final String RESPONSIBLE_PERSON = "responsiblePerson";
+    public static final String TEST_DATE = "testDate";
+    public static final String PARTS = "parts";
+    public static final String FACTORY_NAME = "factoryName";
+    public static final String PART = "part";
+
+    public static final String FIELD_SHOULD_NOT_BE_BLANK = "Field should not be blank";
+
     private boolean valid = true;
     private Map<String, String> faultsMap = new HashMap<>();
 
     public String validateDepartment(WorkOrderDto workOrderDto) {
         if (Strings.isBlank(workOrderDto.getDepartment())) {
-            faultsMap.put("department", "Field should not be blank");
+            faultsMap.put(DEPARTMENT, FIELD_SHOULD_NOT_BE_BLANK);
             valid = false;
         }
         return workOrderDto.getDepartment();
@@ -39,7 +53,7 @@ public class FieldValidation {
             if (startDate.isBefore(LocalDate.now())) {
                 return startDate;
             } else {
-                faultsMap.put("startDate", "Should not be after current date");
+                faultsMap.put(START_DATE, "Should not be after current date");
                 valid = false;
             }
         }
@@ -55,7 +69,7 @@ public class FieldValidation {
             if (endDate.isAfter(startDate)) {
                 return endDate;
             } else {
-                faultsMap.put("endDate", "Should not be before or equal to start date");
+                faultsMap.put(END_DATE, "Should not be before or equal to start date");
                 valid = false;
             }
         }
@@ -67,19 +81,26 @@ public class FieldValidation {
         try {
             return Currency.getInstance(workOrderDto.getCurrency());
         } catch (Exception e) {
-            faultsMap.put("currency", e.getMessage());
+            faultsMap.put(CURRENCY, "Not recognized");
             valid = false;
         }
         return null;
     }
 
     public BigDecimal validateCost(WorkOrderDto workOrderDto) {
+        BigDecimal result = BigDecimal.ZERO;
         try {
-            return BigDecimal.valueOf(Double.parseDouble(workOrderDto.getCost()));
+            result = BigDecimal.valueOf(Double.parseDouble(workOrderDto.getCost()));
         } catch (Exception e) {
-            faultsMap.put("cost", e.getMessage());
+            faultsMap.put(COST, e.toString());
             valid = false;
         }
+
+        if (!(result.compareTo(BigDecimal.ZERO) > 0)) {
+            faultsMap.put(COST, "Cost must be greater than 0");
+            valid = false;
+        }
+
         return null;
     }
 
@@ -90,9 +111,9 @@ public class FieldValidation {
 
         if (startDate != null && endDate != null && analysisDate != null) {
             if (analysisDate.isBefore(startDate)) {
-                faultsMap.put("analysisDate", "Before start date");
+                faultsMap.put(ANALYSIS_DATE, "Before start date");
             } else if (analysisDate.isAfter(endDate)) {
-                faultsMap.put("analysisDate", "After end date");
+                faultsMap.put(ANALYSIS_DATE, "After end date");
             } else {
                 return analysisDate;
             }
@@ -103,7 +124,7 @@ public class FieldValidation {
 
     public String validateResponsiblePerson(WorkOrderDto workOrderDto) {
         if (Strings.isBlank(workOrderDto.getResponsiblePerson())) {
-            faultsMap.put("responsiblePerson", "Field should not be blank");
+            faultsMap.put(RESPONSIBLE_PERSON, FIELD_SHOULD_NOT_BE_BLANK);
             valid = false;
         }
         return workOrderDto.getResponsiblePerson();
@@ -116,10 +137,10 @@ public class FieldValidation {
 
         if (testDate != null && endDate != null && analysisDate != null) {
             if (testDate.isBefore(analysisDate)) {
-                faultsMap.put("testDate", "Before analysis date");
+                faultsMap.put(TEST_DATE, "Before analysis date");
                 valid = false;
             } else if (testDate.isAfter(endDate)) {
-                faultsMap.put("testDate", "After end date");
+                faultsMap.put(TEST_DATE, "After end date");
                 valid = false;
             } else {
                 return testDate;
@@ -130,7 +151,7 @@ public class FieldValidation {
 
     public List<Part> validateAndExtractParts(WorkOrderDto workOrderDto) {
         if (workOrderDto.getParts().isEmpty()) {
-            faultsMap.put("parts", "No parts defined");
+            faultsMap.put(PARTS, "No parts defined");
             valid = false;
         }
         return workOrderDto.getParts()
@@ -141,7 +162,7 @@ public class FieldValidation {
 
     public String validateFactoryName(WorkOrderDto workOrderDto) {
         if (Strings.isBlank(workOrderDto.getFactoryName())) {
-            faultsMap.put("factoryName", "Field should not be blank");
+            faultsMap.put(FACTORY_NAME, "Field should not be blank");
             valid = false;
         }
         return workOrderDto.getFactoryName();
@@ -150,7 +171,7 @@ public class FieldValidation {
     public String validateFactoryOrderNumber(WorkOrderDto workOrderDto) {
         var validationPattern = "[a-zA-Z]{2}[0-9]{8}";
         if (!workOrderDto.getFactoryOrderNumber().matches(validationPattern)) {
-            faultsMap.put("factoryName", "Invalid format");
+            faultsMap.put(FACTORY_NAME, "Invalid format");
             valid = false;
         }
         return workOrderDto.getFactoryOrderNumber();
@@ -162,7 +183,7 @@ public class FieldValidation {
 
     private void validateInventoryNumber(Part part) {
         if (Strings.isBlank(part.getInventoryNumber())) {
-            faultsMap.put("part", String.format("Part name: {} has blank inventory number", part.getName()));
+            faultsMap.put(PART, String.format("Part name: {} has blank inventory number", part.getName()));
             valid = false;
         }
     }
@@ -170,14 +191,14 @@ public class FieldValidation {
     private LocalDate extractStartDate(WorkOrderDto workOrderDto) {
         LocalDate startDate;
         if (Strings.isBlank(workOrderDto.getStartDate())) {
-            faultsMap.put("startDate", "Field should not be blank");
+            faultsMap.put(START_DATE, "Field should not be blank");
             valid = false;
         }
 
         try {
             return LocalDate.parse(workOrderDto.getStartDate());
         } catch (Exception e) {
-            faultsMap.put("startDate", e.getMessage());
+            faultsMap.put(START_DATE, e.getMessage());
             valid = false;
         }
         return null;
@@ -185,15 +206,15 @@ public class FieldValidation {
 
     private LocalDate extractEndDate(WorkOrderDto workOrderDto) {
         LocalDate endDate;
-        if (Strings.isBlank(workOrderDto.getStartDate())) {
-            faultsMap.put("endDate", "Field should not be blank");
+        if (Strings.isBlank(workOrderDto.getEndDate())) {
+            faultsMap.put(END_DATE, "Field should not be blank");
             valid = false;
         }
 
         try {
-            return LocalDate.parse(workOrderDto.getStartDate());
+            return LocalDate.parse(workOrderDto.getEndDate());
         } catch (Exception e) {
-            faultsMap.put("endDate", e.getMessage());
+            faultsMap.put(END_DATE, e.getMessage());
             valid = false;
         }
         return null;
@@ -217,13 +238,13 @@ public class FieldValidation {
 
     private LocalDate extractTestDate(WorkOrderDto workOrderDto) {
         LocalDate testDate;
-        if (Strings.isBlank(workOrderDto.getAnalysisDate())) {
+        if (Strings.isBlank(workOrderDto.getTestDate())) {
             faultsMap.put("testDate", "Field should not be blank");
             valid = false;
         }
 
         try {
-            return LocalDate.parse(workOrderDto.getAnalysisDate());
+            return LocalDate.parse(workOrderDto.getTestDate());
         } catch (Exception e) {
             faultsMap.put("testDate", e.getMessage());
             valid = false;

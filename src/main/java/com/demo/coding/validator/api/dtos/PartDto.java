@@ -1,10 +1,11 @@
 package com.demo.coding.validator.api.dtos;
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
 
-@Value
+@Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PartDto {
     String inventoryNumber;
     String name;
