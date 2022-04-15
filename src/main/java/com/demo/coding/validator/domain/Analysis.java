@@ -14,7 +14,7 @@ public class Analysis extends WorkOrder {
                     LocalDate endDate,
                     Currency currency,
                     BigDecimal cost,
-                    List<Part> parts) {
-        super(department, startDate, endDate, currency, cost, parts);
+                    List<WorkOrderPart> workOrderParts) {
+        super(department, startDate, endDate, currency, cost, workOrderParts);
     }
 }

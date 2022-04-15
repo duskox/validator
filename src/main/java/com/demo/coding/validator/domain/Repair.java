@@ -18,11 +18,11 @@ public class Repair extends WorkOrder {
                   LocalDate endDate,
                   Currency currency,
                   BigDecimal cost,
-                  List<Part> parts,
+                  List<WorkOrderPart> workOrderParts,
                   LocalDate analysisDate,
                   String responsiblePerson,
                   LocalDate testDate) {
-        super(department, startDate, endDate, currency, cost, parts);
+        super(department, startDate, endDate, currency, cost, workOrderParts);
         this.analysisDate = analysisDate;
         this.responsiblePerson = responsiblePerson;
         this.testDate = testDate;

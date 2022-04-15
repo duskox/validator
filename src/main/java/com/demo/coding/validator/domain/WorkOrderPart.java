@@ -5,7 +5,7 @@ import lombok.Value;
 
 @Value
 @Builder
-public class Part {
+public class WorkOrderPart {
     String inventoryNumber;
     String name;
     int count;

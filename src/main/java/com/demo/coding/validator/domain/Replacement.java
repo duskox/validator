@@ -17,10 +17,10 @@ public class Replacement extends WorkOrder {
                        LocalDate endDate,
                        Currency currency,
                        BigDecimal cost,
-                       List<Part> parts,
+                       List<WorkOrderPart> workOrderParts,
                        String factoryName,
                        String factoryOrderNumber) {
-        super(department, startDate, endDate, currency, cost, parts);
+        super(department, startDate, endDate, currency, cost, workOrderParts);
         this.factoryName = factoryName;
         this.factoryOrderNumber = factoryOrderNumber;
     }

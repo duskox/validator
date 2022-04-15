@@ -4,8 +4,8 @@ import com.demo.coding.validator.api.dtos.PartDto;
 
 public class FieldUtils {
 
-    public static Part toDomainObject(PartDto partDto) {
-        return Part.builder()
+    public static WorkOrderPart toDomainObject(PartDto partDto) {
+        return WorkOrderPart.builder()
                 .name(partDto.getName())
                 .count(partDto.getCount())
                 .inventoryNumber(partDto.getInventoryNumber())

@@ -1,10 +1,11 @@
 package com.demo.coding.validator.services;
 
-import com.demo.coding.validator.api.dtos.ValidationResponseDto;
 import com.demo.coding.validator.api.dtos.WorkOrderDto;
 import com.demo.coding.validator.api.errors.InvalidWorkOrderException;
 import com.demo.coding.validator.domain.*;
+import com.demo.coding.validator.persistence.WorkOrderStore;
 import org.springframework.stereotype.Service;
+import reactor.util.annotation.Nullable;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,7 +13,14 @@ import java.util.stream.Collectors;
 @Service
 public class WorkOrderProcessor {
 
-    public boolean validateWorkOrder(WorkOrderDto workOrderDto) {
+    private final WorkOrderStore workOrderStore;
+
+    public WorkOrderProcessor(WorkOrderStore workOrderStore) {
+        this.workOrderStore = workOrderStore;
+    }
+
+    @Nullable
+    public WorkOrder validateWorkOrder(WorkOrderDto workOrderDto) {
 
         var workOrderType = validateWorkOrderType(workOrderDto);
 
@@ -23,10 +31,7 @@ public class WorkOrderProcessor {
             case REPLACEMENT -> workOrder = mapToReplacementWorkOrder(workOrderDto);
         }
 
-        if (workOrder != null) {
-            return true;
-        }
-        return false;
+        return workOrder;
     }
 
     private WorkOrderType validateWorkOrderType(WorkOrderDto workOrderDto) {
@@ -45,7 +50,7 @@ public class WorkOrderProcessor {
         var endDate = fieldValidation.validateEndDate(workOrderDto);
         var currency = fieldValidation.validateCurrency(workOrderDto);
         var cost = fieldValidation.validateCost(workOrderDto);
-        List<Part> parts = workOrderDto
+        List<WorkOrderPart> workOrderParts = workOrderDto
                 .getParts()
                 .stream()
                 .map(FieldUtils::toDomainObject)
@@ -60,7 +65,7 @@ public class WorkOrderProcessor {
                 endDate,
                 currency,
                 cost,
-                parts);
+                workOrderParts);
     }
 
     private Repair mapToRepairWorkOrder(WorkOrderDto workOrderDto) {

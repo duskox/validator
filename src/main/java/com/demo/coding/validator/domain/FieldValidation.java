@@ -100,8 +100,7 @@ public class FieldValidation {
             faultsMap.put(COST, "Cost must be greater than 0");
             valid = false;
         }
-
-        return null;
+        return result;
     }
 
     public LocalDate validateAnalysisDate(WorkOrderDto workOrderDto) {
@@ -118,7 +117,6 @@ public class FieldValidation {
                 return analysisDate;
             }
         }
-
         return null;
     }
 
@@ -149,7 +147,7 @@ public class FieldValidation {
         return null;
     }
 
-    public List<Part> validateAndExtractParts(WorkOrderDto workOrderDto) {
+    public List<WorkOrderPart> validateAndExtractParts(WorkOrderDto workOrderDto) {
         if (workOrderDto.getParts().isEmpty()) {
             faultsMap.put(PARTS, "No parts defined");
             valid = false;
@@ -177,13 +175,13 @@ public class FieldValidation {
         return workOrderDto.getFactoryOrderNumber();
     }
 
-    public void validatePartsInventoryNumber(List<Part> parts) {
-        parts.forEach(this::validateInventoryNumber);
+    public void validatePartsInventoryNumber(List<WorkOrderPart> workOrderParts) {
+        workOrderParts.forEach(this::validateInventoryNumber);
     }
 
-    private void validateInventoryNumber(Part part) {
-        if (Strings.isBlank(part.getInventoryNumber())) {
-            faultsMap.put(PART, String.format("Part name: {} has blank inventory number", part.getName()));
+    private void validateInventoryNumber(WorkOrderPart workOrderPart) {
+        if (Strings.isBlank(workOrderPart.getInventoryNumber())) {
+            faultsMap.put(PART, String.format("Part name: {} has blank inventory number", workOrderPart.getName()));
             valid = false;
         }
     }
