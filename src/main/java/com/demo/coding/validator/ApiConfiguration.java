@@ -14,6 +14,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.reactive.result.view.ViewResolver;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 import java.util.stream.Collectors;
 
@@ -41,5 +43,20 @@ public class ApiConfiguration {
         handler.setMessageReaders(serverCodecConfigurer.getReaders());
 
         return handler;
+    }
+
+    @Bean
+    public ClassLoaderTemplateResolver templateResolver() {
+        ClassLoaderTemplateResolver config = new ClassLoaderTemplateResolver();
+
+        config.setPrefix("templates/");
+        config.setSuffix(".html");
+        config.setTemplateMode(TemplateMode.HTML);
+        config.setCharacterEncoding("UTF-8");
+        config.setOrder(0);
+        config.setCheckExistence(true);
+        config.setCacheable(false);
+
+        return config;
     }
 }
