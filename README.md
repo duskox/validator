@@ -1,4 +1,4 @@
-#Work Order Validator app
+## Work Order Validator app
 
 To run the app:\
 ```./mvnw spring-boot:run```
