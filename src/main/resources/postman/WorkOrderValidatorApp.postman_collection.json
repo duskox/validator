@@ -1,0 +1,108 @@
+{
+	"info": {
+		"_postman_id": "31222613-cb16-450d-b930-5c05a9c6f5b2",
+		"name": "WorkOrderValidatorApp",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Submit a REPAIR work order",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"type\":\"REPAIR\",\n  \"department\":\"GOoD repair department\",\n  \"start_date\":\"2020-08-13\",\n  \"end_date\":\"2020-08-16\",\n  \"analysis_date\":\"2020-08-14\",\n  \"test_date\":\"2020-08-15\",\n  \"responsible_person\":\"GOoD repairmaster\",\n  \"currency\":\"USD\",\n  \"cost\":123.12,\n  \"parts\":[\n     {\n        \"name\":\"PartNumber3\",\n        \"count\":3\n     },\n     {\n        \"inventory_number\":\"InventoryNumber4 \",\n        \"name\":\"PartNumber4\",\n        \"count\":4\n     }\n  ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/work-orders",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"work-orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Submit a REPLACEMENT work order",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"type\":\"REPLACEMENT\",\n  \"department\":\"GOoD replacement department\",\n  \"start_date\":\"2020-08-13\",\n  \"end_date\":\"2020-08-16\",\n  \"factory_name\":\"GOoD factory\",\n  \"factory_order_number\":\"DE12345678\",\n  \"currency\":\"USD\",\n  \"cost\":123.12,\n  \"parts\":[\n     {\n        \"inventory_number\":\"InventoryNumber5\",\n        \"name\":\"PartNumber5\",\n        \"count\":5\n     },\n     {\n        \"inventory_number\":\"InventoryNumber6\",\n        \"name\":\"PartNumber6\",\n        \"count\":6\n     }\n  ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/work-orders",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"work-orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Submit an ANALYSIS work order",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"type\":\"ANALYSIS\",\n   \"department\":\"GOoD analysis department\",\n   \"start_date\":\"2020-08-13\",\n   \"end_date\":\"2020-08-15\",\n   \"currency\":\"USD\",\n   \"cost\":123.12,\n   \"parts\":[\n      {\n         \"inventory_number\":\"InventoryNumber1\",\n         \"name\":\"PartNumber1\",\n         \"count\":1\n      },\n      {\n         \"inventory_number\":\"InventoryNumber2\",\n         \"name\":\"PartNumber2\",\n         \"count\":2\n      }\n   ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/work-orders",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"work-orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all validated work orders",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/work-orders",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"work-orders"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
