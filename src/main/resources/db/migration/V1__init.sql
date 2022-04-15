@@ -12,16 +12,16 @@ CREATE TABLE work_orders (
     factory_name VARCHAR(255),
     factory_order_number VARCHAR(255),
     PRIMARY KEY (id),
-    UNIQUE KEY uk_id (id)
+    UNIQUE KEY ukwo_id (id)
 );
 
 CREATE TABLE parts (
     id VARCHAR(255) NOT NULL,
-    work_order_id VARCHAR(255),
+    work_order_id VARCHAR(255) NOT NULL,
     name VARCHAR(255),
     part_count NUMERIC,
     inventory_number VARCHAR(255),
     FOREIGN KEY (work_order_id) REFERENCES work_orders(id),
     PRIMARY KEY (id),
-    UNIQUE KEY uk_id_work_order_id (id)
+    UNIQUE KEY ukp_id (id)
 );

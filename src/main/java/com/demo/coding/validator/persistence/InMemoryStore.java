@@ -33,7 +33,7 @@ public class InMemoryStore implements WorkOrderStore {
         workOrder
                 .getWorkOrderParts()
                 .stream()
-                .map(workOrderPart -> this.toDbo(workOrderPart, internalWorkOrderId))
+                .map(workOrderPart -> toDbo(workOrderPart, internalWorkOrderId))
                 .map(partsRepository::save);
     }
 
