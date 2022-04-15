@@ -4,6 +4,8 @@ import com.demo.coding.validator.domain.*;
 import com.demo.coding.validator.persistence.dbo.PartDbo;
 import com.demo.coding.validator.persistence.dbo.WorkOrderDbo;
 import com.demo.coding.validator.persistence.utils.UuidProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Currency;
@@ -13,6 +15,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class InMemoryStore implements WorkOrderStore {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryStore.class);
 
     private final WorkOrdersRepository workOrdersRepository;
     private final PartsRepository partsRepository;
@@ -34,7 +38,7 @@ public class InMemoryStore implements WorkOrderStore {
                 .getWorkOrderParts()
                 .stream()
                 .map(workOrderPart -> toDbo(workOrderPart, internalWorkOrderId))
-                .map(partsRepository::save);
+                .forEach(partsRepository::save);
     }
 
     @Override
@@ -154,7 +158,7 @@ public class InMemoryStore implements WorkOrderStore {
     private WorkOrderDbo toDbo(Repair repair, UUID uuid) {
         return new WorkOrderDbo(
                 uuid.toString(),
-                WorkOrderType.ANALYSIS.name(),
+                WorkOrderType.REPAIR.name(),
                 repair.getDepartment(),
                 repair.getStartDate(),
                 repair.getEndDate(),
@@ -170,7 +174,7 @@ public class InMemoryStore implements WorkOrderStore {
     private WorkOrderDbo toDbo(Replacement replacement, UUID uuid) {
         return new WorkOrderDbo(
                 uuid.toString(),
-                WorkOrderType.ANALYSIS.name(),
+                WorkOrderType.REPLACEMENT.name(),
                 replacement.getDepartment(),
                 replacement.getStartDate(),
                 replacement.getEndDate(),

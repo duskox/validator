@@ -1,7 +1,5 @@
 package com.demo.coding.validator.api.errors;
 
-import org.springframework.http.HttpStatus;
-
 import java.util.Map;
 
 /**
